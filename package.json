@@ -1,0 +1,27 @@
+{
+  "name": "boltz-keysend",
+  "version": "1.0.0",
+  "description": "A program to pay out for reward",
+  "scripts": {
+    "start": "node src/main.js",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "test": "jest"
+  },
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.5.5",
+    "@grpc/proto-loader": "^0.6.9",
+    "@prisma/client": "^3.10.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.4.0",
+    "jest": "^27.5.1",
+    "prettier": "^2.5.1",
+    "prisma": "^3.10.0",
+    "supertest": "^6.2.2"
+  }
+}

@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Payment {
+  id String @unique // Boltz id
+  paymentIndex Int? // payment_index for LND
+  status String @default("created") // 1.created 2.paid 3.failed
+  failureReason String?
+  swapAmount Int?
+  payoutAmount Int?
+  nodeId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?
+}
+
+model Blacklist {
+  nodeId String @unique
+}
