@@ -21,6 +21,8 @@ cp .env.example .env
 npx prisma migrate reset
 npx prisma migrate dev --name init
 npx prisma migrate dev --name added_job_title
+
+npx prisma db seed
 ```
 
 ### Run

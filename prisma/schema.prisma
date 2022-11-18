@@ -24,4 +24,5 @@ model Payment {
 
 model Blacklist {
   nodeId String @unique
+  alias String
 }

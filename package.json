@@ -4,10 +4,14 @@
   "description": "A program to pay out for reward",
   "scripts": {
     "start": "node src/main.js",
+    "seed": "node prisma/seed.js",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "test": "jest"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "license": "AGPL-3.0",
   "dependencies": {
