@@ -13,8 +13,10 @@ const prisma_boltz = new PrismaClient({
 main();
 
 async function main() {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);// Filter by Date is after yesterday
   const swaps =
-    await prisma_boltz.$queryRaw`SELECT id, invoice, expectedAmount FROM Swaps WHERE status == 'transaction.claimed';`;
+    await prisma_boltz.$queryRaw`SELECT id, invoice, expectedAmount FROM Swaps WHERE status == 'transaction.claimed' and createdAt >= ${date.toISOString()}`;
   for (const swap of swaps) {
     const id = await prisma.payment.findUnique({
       where: { id: swap.id },

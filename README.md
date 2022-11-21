@@ -29,3 +29,9 @@ npx prisma db seed
 ```
 npm start
 ```
+
+### Cronjob
+If you use PM2 for process manager, use the command below.
+```
+pm2 start src/main.js --cron-restart="*/10 * * * *"
+```
