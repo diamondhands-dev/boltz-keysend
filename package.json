@@ -4,7 +4,6 @@
   "description": "A program to pay out for reward",
   "scripts": {
     "start": "node src/main.js",
-    "seed": "node prisma/seed.js",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",

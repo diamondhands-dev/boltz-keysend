@@ -33,5 +33,5 @@ npm start
 ### Cronjob
 If you use PM2 for process manager, use the command below.
 ```
-pm2 start src/main.js --cron-restart="*/10 * * * *"
+pm2 start src/main.js --name <appname> --cron-restart="*/10 * * * *"
 ```
