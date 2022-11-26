@@ -73,6 +73,54 @@ const lndService = {
       });
     });
   },
+  queryRoutes(pub_key, amt, final_cltv_delta, route_hints) {
+    const request = {
+      pub_key,
+      amt,
+      final_cltv_delta,
+      use_mission_control: false,
+      route_hints,
+    };
+    return new Promise((resolve, reject) => {
+      lightning.queryRoutes(request, (error, response) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(response);
+      });
+    });
+  },
+  sendToRouteV2(payment_hash, route, final_cltv_delta) {
+    const request = {
+      payment_hash,
+      route,
+      final_cltv_delta,
+    };
+    return new Promise((resolve, reject) => {
+      router.sendToRouteV2(request, (error, response) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(response);
+      });
+    });
+  },
+  sendPaymentV2(payment_request) {
+    const request = {
+      payment_request,
+      timeout_seconds: 30,
+    };
+    const call = router.sendPaymentV2(request);
+    console.log('dispatchPayment');
+    call.on('data', function (response) {
+      // A response was received from the server.
+      console.log(response);
+    });
+    call.on('end', function () {
+      // The server has closed the stream.
+      console.log('The server has closed the stream. [sendPaymentV2]');
+    });
+  },
   keysend(dest, amt, id) {
     const secret = crypto.randomBytes(32);
     const hash = crypto.createHash('sha256').update(secret).digest();
@@ -129,6 +177,42 @@ const lndService = {
       // The server has closed the stream.
       console.log('The server has closed the stream. [sendPaymentV2]');
     });
+  },
+  async prePayProbe(pub_key, amount, final_cltv_delta, payment_hash, route_hints) {
+    const MAX_ROUTES_TO_REQUEST = 3;
+    const all_routes = [];
+    let num_requested_routes = 0;
+    while (true) {
+      //console.log(route_hints);
+      let routes = await lndService.queryRoutes(pub_key, amount, final_cltv_delta, route_hints);
+      routes = routes.routes;
+      //console.log(routes[0])
+      if (routes == undefined) {
+        console.log('Could not find any suitable route ${pub_key}');
+        break;
+      } else {
+        num_requested_routes += 1;
+        if (!all_routes.includes(routes[0])) {
+          all_routes.push(routes[0]);
+          const response = await lndService.sendToRouteV2(payment_hash, routes[0]);
+          console.log(response.route.hops);
+          // 1 : INCORRECT_OR_UNKNOWN_PAYMENT_DETAILS
+          // 15: TEMPORARY_CHANNEL_FAILURE
+          if (response.failure.code == 'INCORRECT_OR_UNKNOWN_PAYMENT_DETAILS') {
+            console.log(response.failure.code);
+            console.log('SUCCESS');
+            return routes[0];
+          } else {
+            console.log(response.failure.code);
+          }
+        }
+      }
+
+      if (num_requested_routes >= MAX_ROUTES_TO_REQUEST) {
+        console.log('Max probing request attemped');
+        break;
+      }
+    }
   },
 };
 
